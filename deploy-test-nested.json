@@ -17,6 +17,18 @@
         "env": {            
             "type": "string"
         },
+        "customDomainApi":{
+            "type": "string"
+        },
+        "certificateThumbprintApi": {
+            "type": "string"
+        },
+        "customDomainPublic":{
+            "type": "string"
+        },
+        "certificateThumbprintPublic": {
+            "type": "string"
+        },
         "customDomainPortal":{
             "type": "string"
         },
@@ -25,6 +37,26 @@
         }
     },
     "resources": [
+        {
+            "type": "Microsoft.Web/sites/hostnameBindings",
+            "name": "[concat(parameters('appPrefix'), '-use-', parameters('env'), '-api', '/', parameters('customDomainApi'))]",
+            "apiVersion": "2016-03-01",
+            "location": "East US",
+            "properties": {
+                "sslState": "SniEnabled",
+                "thumbprint":  "[parameters('certificateThumbprintApi')]"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostnameBindings",
+            "name": "[concat(parameters('appPrefix'), '-use-', parameters('env'), '-public', '/', parameters('customDomainPublic'))]",
+            "apiVersion": "2016-03-01",
+            "location": "East US",
+            "properties": {
+                "sslState": "SniEnabled",
+                "thumbprint":  "[parameters('certificateThumbprintPublic')]"
+            }
+        },
         {
             "type": "Microsoft.Web/sites/hostnameBindings",
             "name": "[concat(parameters('appPrefix'), '-use-', parameters('env'), '-portal', '/', parameters('customDomainPortal'))]",
