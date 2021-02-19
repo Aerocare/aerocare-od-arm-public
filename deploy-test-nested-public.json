@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "app_name": {
+            "type": "string"
+        },
+        "app_plan_name": {            
+            "type": "string"
+        },
+        "app_plan_resource_group_name": {            
+            "type": "string"
+        },
+        "appPrefix": {            
+            "type": "string"
+        },
+        "env": {            
+            "type": "string"
+        },
+        "customDomainPublic":{
+            "type": "string"
+        },
+        "certificateThumbprintPublic": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites/hostnameBindings",
+            "name": "[concat(parameters('appPrefix'), '-use-', parameters('env'), '-public', '/', parameters('customDomainPublic'))]",
+            "apiVersion": "2016-03-01",
+            "location": "East US",
+            "properties": {
+                "sslState": "SniEnabled",
+                "thumbprint":  "[parameters('certificateThumbprintPublic')]"
+            }
+        }
+    ]
+}
