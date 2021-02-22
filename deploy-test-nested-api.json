@@ -2,13 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "app_name": {
+        "appPlanName": {            
             "type": "string"
         },
-        "app_plan_name": {            
-            "type": "string"
-        },
-        "app_plan_resource_group_name": {            
+        "appPlanResourceGroupName": {            
             "type": "string"
         },
         "appPrefix": {            
