@@ -23,7 +23,8 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Web/sites/hostnameBindings",
+            "condition": "[equals(parameters('env'),'prod')]",
+			"type": "Microsoft.Web/sites/hostnameBindings",
             "name": "[concat(parameters('appPrefix'), '-use-', parameters('env'), '-public', '/', parameters('customDomainPublic'))]",
             "apiVersion": "2016-03-01",
             "location": "East US",
