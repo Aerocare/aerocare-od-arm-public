@@ -18,7 +18,7 @@
     },
     "resources": [
         {
-            "condition": "[not(and(equals(parameters('env'),'prod'), contains(parameters('appName'),'public')))]",
+            "condition": "[not(and(contains(parameters('appName'),'prod'), contains(parameters('appName'),'public')))]",
             "type": "Microsoft.Web/sites/hostnameBindings",
             "name": "[concat(parameters('appName'), '/', parameters('appDomain'))]",
             "apiVersion": "2016-03-01",
