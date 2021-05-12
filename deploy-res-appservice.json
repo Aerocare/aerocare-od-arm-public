@@ -1,0 +1,196 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServicePlanId": {            
+            "type": "string"
+        },
+        "appServiceName": {            
+            "type": "string"
+        },
+        "appServiceDomain": {            
+            "type": "string"
+        },
+        "appServiceCertificateName": {            
+            "type": "string"
+        },
+        "env": {            
+            "type": "string",
+            "allowedValues": [
+                "ci",
+                "uat",
+                "hotfix",
+                "training",
+                "prod"
+              ]            
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        }      
+    },
+    "variables": {
+        "linkedTemplateBindingUri": "https://raw.githubusercontent.com/bluetread/aerocare-od-arm-public/master/deploy-test-nested-appservice-binding.json"                                               
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('appServiceName')]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+                },
+            "tags": {
+                "environment": "[parameters('env')]"
+            },
+            "kind": "app",
+            "properties": {
+                "enabled": true,
+                "serverFarmId": "[parameters('appServicePlanId')]",
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "siteConfig": {},
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": true,
+                "redundancyMode": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('appServiceName'), '/web')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('appServiceName'))]"
+            ],
+            "tags": {
+                "environment": "[parameters('env')]"
+            },
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "[concat('$', parameters('appServiceName'))]",
+                "azureStorageAccounts": {},
+                "scmType": "None",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": true,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": true
+                    }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "Disabled",
+                "reservedInstanceCount": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('appServiceName'), '/', parameters('appServiceDomain'))]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
+            ],
+            "properties": {
+            }
+        },
+        {
+            "apiVersion": "2016-03-01",
+            "location": "[parameters('location')]",
+            "name": "[parameters('appServiceCertificateName')]",
+            "type": "Microsoft.Web/certificates",
+            "properties": {
+                "serverFarmId": "[parameters('appServicePlanId')]",
+                "canonicalName": "[parameters('appServiceDomain')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]",
+                "[concat('Microsoft.Web/sites/', parameters('appServiceName'),'/hostnameBindings/', parameters('appServiceDomain'))]"
+            ]
+        },
+        {
+            "apiVersion": "2015-01-01",
+            "name": "linkedTemplateApi",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]",
+                "[concat('Microsoft.Web/certificates/', parameters('appServiceCertificateName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('linkedTemplateBindingUri')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appName": {            
+                        "value": "[parameters('appServiceName')]"
+                    },
+                    "appDomain": {
+                        "value": "[parameters('appServiceDomain')]"
+                    },
+                    "certificateThumbprint": {
+                        "value": "[reference(resourceId('Microsoft.Web/certificates', parameters('appServiceCertificateName'))).Thumbprint]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    }
+                }
+            }
+        }        
+    ]
+}
