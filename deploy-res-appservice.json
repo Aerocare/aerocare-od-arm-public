@@ -168,37 +168,6 @@
             "dependsOn": [
                 "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
             ]
-        },
-        {
-            "condition":"[and(parameters('deployDomain'), parameters('deployCertificate'))]",
-            "apiVersion": "2015-01-01",
-            "name": "linkedTemplateApi",
-            "type": "Microsoft.Resources/deployments",
-            "dependsOn": [
-                "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]",
-                "[concat('Microsoft.Web/certificates/', parameters('appServiceCertificateName'))]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('linkedTemplateBindingUri')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appName": {            
-                        "value": "[parameters('appServiceName')]"
-                    },
-                    "appDomain": {
-                        "value": "[parameters('appServiceDomain')]"
-                    },
-                    "certificateThumbprint": {
-                        "value": "[reference(resourceId('Microsoft.Web/certificates', parameters('appServiceCertificateName'))).Thumbprint]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    }
-                }
-            }
-        }        
+        }
     ]
 }
