@@ -170,6 +170,7 @@
             ]
         },
         {
+            "condition":"[and(parameters('deployDomain'), parameters('deployCertificate'))]",
             "apiVersion": "2015-01-01",
             "name": "linkedTemplateApi",
             "type": "Microsoft.Resources/deployments",
