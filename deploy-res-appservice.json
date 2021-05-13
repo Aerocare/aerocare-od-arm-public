@@ -169,7 +169,7 @@
             },
             "dependsOn": [
                 "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]",
-                "[if(and(parameters('deployDomain'), parameters('deployCertificate')), concat('Microsoft.Web/sites/', parameters('appServiceName'),'/hostnameBindings/', parameters('appServiceDomain')), json('null'))]"
+                "[if(and(parameters('deployDomain'), parameters('deployCertificate')), concat('Microsoft.Web/sites/', parameters('appServiceName'),'/hostnameBindings/', parameters('appServiceDomain')), '')]"
             ]
         },
         {
