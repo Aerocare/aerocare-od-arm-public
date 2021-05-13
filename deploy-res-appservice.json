@@ -38,7 +38,7 @@
         }      
     },
     "variables": {
-        "linkedTemplateBindingUri": "https://raw.githubusercontent.com/bluetread/aerocare-od-arm-public/master/deploy-test-nested-appservice-binding.json"                                               
+        "linkedTemplateBindingUri": "https://raw.githubusercontent.com/bluetread/aerocare-od-arm-public/master/deploy-test-nested-appservice-binding.json"                                              
     },
     "resources": [
         {
@@ -153,9 +153,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
-            ],
-            "properties": {
-            }
+            ]
         },
         {
             "condition":"[and(parameters('deployDomain'), parameters('deployCertificate'))]",
@@ -168,8 +166,7 @@
                 "canonicalName": "[parameters('appServiceDomain')]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]",
-                "[if(and(parameters('deployDomain'), parameters('deployCertificate')), concat('Microsoft.Web/sites/', parameters('appServiceName'),'/hostnameBindings/', parameters('appServiceDomain')), '')]"
+                "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
             ]
         },
         {
