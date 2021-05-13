@@ -144,30 +144,6 @@
                 "ftpsState": "Disabled",
                 "reservedInstanceCount": 0
             }
-        },
-        {
-            "condition":"[parameters('deployDomain')]",
-            "type": "Microsoft.Web/sites/hostNameBindings",
-            "apiVersion": "2018-11-01",
-            "name": "[concat(parameters('appServiceName'), '/', parameters('appServiceDomain'))]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
-            ]
-        },
-        {
-            "condition":"[and(parameters('deployDomain'), parameters('deployCertificate'))]",
-            "apiVersion": "2016-03-01",
-            "location": "[parameters('location')]",
-            "name": "[parameters('appServiceCertificateName')]",
-            "type": "Microsoft.Web/certificates",
-            "properties": {
-                "serverFarmId": "[parameters('appServicePlanId')]",
-                "canonicalName": "[parameters('appServiceDomain')]"
-            },
-            "dependsOn": [
-                "[concat('Microsoft.Web/sites/', parameters('appServiceName'))]"
-            ]
         }
     ]
 }
