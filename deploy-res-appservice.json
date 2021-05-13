@@ -27,6 +27,14 @@
         "location": {
             "type": "string",
             "defaultValue": "[resourceGroup().location]"
+        },
+        "deployDomain": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "deployCertificate": {
+            "type": "bool",
+            "defaultValue": true
         }      
     },
     "variables": {
@@ -138,6 +146,7 @@
             }
         },
         {
+            "condition":"[parameters('deployDomain')]",
             "type": "Microsoft.Web/sites/hostNameBindings",
             "apiVersion": "2018-11-01",
             "name": "[concat(parameters('appServiceName'), '/', parameters('appServiceDomain'))]",
@@ -149,6 +158,7 @@
             }
         },
         {
+            "condition":"[and(parameters('deployDomain'), parameters('deployCertificate'))]",
             "apiVersion": "2016-03-01",
             "location": "[parameters('location')]",
             "name": "[parameters('appServiceCertificateName')]",
